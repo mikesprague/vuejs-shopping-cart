@@ -140,6 +140,10 @@
         return value.price * value.quantity;
       });
 
+      Vue.filter( "tocurrency", function( value ) {
+        return accounting.formatMoney( value );
+      });
+
       var demo = new Vue({
         el: "#app",
         data: {
