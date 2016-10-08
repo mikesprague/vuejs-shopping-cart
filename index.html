@@ -144,6 +144,10 @@
         return accounting.formatMoney( value );
       });
 
+      Vue.filter( "capitalized", function( str ) {
+        return str[0].toUpperCase() + str.slice(1);
+      });
+
       var demo = new Vue({
         el: "#app",
         data: {
