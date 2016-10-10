@@ -54,10 +54,10 @@
             </div>
           </div>
           <div class="row">
-            <div class="col-sm-12" v-for="item in products | filterBy search in 'name' 'options' | orderBy sortByParam orderDir">
-              <h3>{{ item.name | textcapitalized }}</h3>
+            <div class="col-sm-12" v-for="item in filteredProducts">
+              <h3>{{ item.name | titlecase }}</h3>
                 <li v-for="option in item.options">
-                  <strong>{{ option.details | textcapitalized }}</strong> {{ option.price | tocurrency }}
+                  <strong>{{ option.details | titlecase }}</strong> {{ option.price | tocurrency }}
                   <button class="btn btn-default btn-xs" type="button" @click="addToCart( item, option )" title="Add to Cart">Add to <i class="fa fa-cart-plus"></i></button>
                 </li>
               </ul>
@@ -145,7 +145,11 @@
       });
 
       Vue.filter( "zeropad", function( num ) {
-        return _.padStart( num, 2, '0' );
+        if ( num !== 0 ) {
+          return _.padStart( num, 2, '0' );
+        } else {
+          return 0;
+        }
       });
 
       Vue.filter( "titlecase", function( str ) {
@@ -165,13 +169,14 @@
           donation: 0,
           subtotal: 0,
           search: "",
-          orderDir: -1,
+          orderDir: "desc",
           sortByParam: "",
         },
         methods: {
           sortProducts: function( sortBy ) {
-            this.orderDir *= -1;
             this.sortByParam = sortBy;
+            this.orderDir = this.orderDir === "asc" ? "desc" : "asc";
+            this.products = _.orderBy( this.products, this.sortByParam, this.orderDir );
           },
           addToCart: function( product, option ) {
             var itemName = product.name + " " + option.details;
@@ -207,6 +212,18 @@
           }
         },
         computed: {
+          filteredProducts: function() {
+            if ( this.search ) {
+              var searchQuery = this.search;
+              return this.products.filter( function( product ) {
+                if ( _.upperCase( product.name).indexOf( _.upperCase( searchQuery )) !== -1 ) {
+                  return product;
+                }
+              });
+            } else {
+              return this.products;
+            }
+          },
           count: function() {
             var itemCount = 0;
             for ( var idx in this.shopping_cart ) {
