@@ -55,9 +55,9 @@
           </div>
           <div class="row">
             <div class="col-sm-12" v-for="item in products | filterBy search in 'name' 'options' | orderBy sortByParam orderDir">
-              <h3>{{ item.name | capitalizetext }}</h3>
+              <h3>{{ item.name | textcapitalized }}</h3>
                 <li v-for="option in item.options">
-                  <strong>{{ option.details | capitalizetext }}</strong> {{ option.price | tocurrency }}
+                  <strong>{{ option.details | textcapitalized }}</strong> {{ option.price | tocurrency }}
                   <button class="btn btn-default btn-xs" type="button" @click="addToCart( item, option )" title="Add to Cart">Add to <i class="fa fa-cart-plus"></i></button>
                 </li>
               </ul>
@@ -130,24 +130,32 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/accounting.js/0.4.1/accounting.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.16.4/lodash.min.js"></script>
     <script src="https://vuejs.mikesprague.me/shared/js/components.js"></script>
-    <script src="https://vuejs.mikesprague.me/shared/js/filters.js"></script>
     <script src="data.js"></script>
     <script>
       var footer = new Vue({
         el: ".footer"
       });
 
-      Vue.filter( "subvalue", function( value ) {
-        return value.price * value.quantity;
+      Vue.filter( "subvalue", function( val ) {
+        return _.multiply( val.price, val.quantity );
       });
 
-      Vue.filter( "tocurrency", function( value ) {
-        return accounting.formatMoney( value );
+      Vue.filter( "tocurrency", function( num ) {
+        return accounting.formatMoney( num );
       });
 
-      Vue.filter( "capitalizetext", function( str ) {
-        return str[0].toUpperCase() + str.slice(1);
+      Vue.filter( "zeropad", function( num ) {
+        return _.padStart( num, 2, '0' );
       });
+
+      Vue.filter( "titlecase", function( str ) {
+        return _.startCase( str );
+      });
+
+      Vue.filter( "textcapitalized", function( str ) {
+        return _.capitalize( str );
+      });
+
 
       var demo = new Vue({
         el: "#app",
