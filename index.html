@@ -205,11 +205,11 @@
           removeOne: function( product ) {
             product.quantity--;
             if ( product.quantity <= 0 ) {
-                this.shopping_cart.$remove( product );
+                this.shopping_cart.pop( product );
             }
           },
           removeFromCart: function( product ) {
-            this.shopping_cart.$remove( product );
+            this.shopping_cart.pop( product );
           }
         },
         computed: {
